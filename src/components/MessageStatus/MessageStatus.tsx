@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { ConnectionStatus } from "@/types";
 import {
 	CheckingStatus,
@@ -11,14 +11,17 @@ type MessageStatusProps = {
 };
 
 const MessageStatus: React.FC<MessageStatusProps> = ({ status }) => {
-	let content = <></>;
-	if (status.isChecking) {
-		content = <CheckingStatus />;
-	} else if (!status.isConnected) {
-		content = <ErrorStatus message={status.error || "Unknown error"} />;
-	} else {
-		content = <SuccessStatus modelName={status.modelInfo || "Unknown"} />;
-	}
+
+	const content = useMemo(() => {
+		if (status.isChecking) {
+			return <CheckingStatus />;
+		} else if (!status.isConnected) {
+			return <ErrorStatus message={status.error || "Unknown error"} />;
+		} else {
+			return <SuccessStatus modelName={status.modelInfo || "Unknown"} />;
+		}
+	}, [status]);
+
 
 	return <section className="flex-0">{content}</section>;
 };

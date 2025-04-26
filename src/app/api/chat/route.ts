@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 	try {
 		const body = await req.json();
 		const validatedRequest = ChatRequestValidator.parse(body);
-		
+
 		const model = getVertexModel();
 		const result = await streamText({
 			model,
@@ -16,7 +16,8 @@ export async function POST(req: Request) {
 			temperature: 0.7,
 			maxTokens: 800,
 		});
-		
+
+		// Convert the result to a response and return it directly
 		return result.toDataStreamResponse();
 	} catch (error) {
 		return handleApiError(error, AI_ERRORS.GENERATION_FAILED);

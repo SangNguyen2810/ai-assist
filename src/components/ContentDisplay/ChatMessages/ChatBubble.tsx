@@ -1,3 +1,4 @@
+import React from "react";
 import { Message } from "@ai-sdk/react";
 
 const ChatBubble = ({ message }: { message: Message }) => {
@@ -15,4 +16,4 @@ const ChatBubble = ({ message }: { message: Message }) => {
   );
 };
 
-export default ChatBubble;
+export default React.memo(ChatBubble);

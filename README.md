@@ -1,36 +1,167 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Assistant with Supabase Logging
+
+A modern AI chat assistant powered by Google Vertex AI with automatic conversation logging to Supabase.
+
+## Features
+
+- **Real-time AI Chat**: Communicates with Google Vertex AI for natural language responses
+- **Streaming Responses**: Renders AI responses in real-time as they are generated
+- **Automatic Chat Logging**: Stores all conversations in Supabase for future reference
+- **Optimized Performance**: Background logging doesn't impact the user experience
+- **Modern UI**: Clean, responsive interface built with Next.js and React
+- **Error Handling**: Graceful handling of connection issues and errors
+
+## Tech Stack
+
+- **Frontend**: Next.js 15 with React 19
+- **AI Integration**: Google Vertex AI via @ai-sdk
+- **Database**: Supabase for conversation logging
+- **Styling**: TailwindCSS for UI components
+- **TypeScript**: For type safety and better developer experience
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.x or later
+- A Google Cloud account with Vertex AI API access
+- A Supabase account and project
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/ai-assistant.git
+   cd ai-assistant
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the root directory with the following variables:
+   ```
+   # Google Vertex AI
+   GOOGLE_API_KEY=your_google_api_key
+   
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+### Supabase Setup
+
+Create a `chat_logs` table in your Supabase project with the following SQL:
+
+```sql
+CREATE TABLE chat_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_input TEXT NOT NULL,
+  ai_response TEXT NOT NULL,
+  timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
+
+-- Create index for faster queries
+CREATE INDEX chat_logs_timestamp_idx ON chat_logs (timestamp);
+
+-- Set up Row Level Security (recommended for production)
+ALTER TABLE chat_logs ENABLE ROW LEVEL SECURITY;
+
+-- Add a policy that allows insert only
+CREATE POLICY "Allow inserts" ON chat_logs
+  FOR INSERT
+  TO anon
+  WITH CHECK (true);
+```
+
+### Running the Application
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── src/
+│   ├── app/              # Next.js App Router
+│   │   ├── api/          # API routes
+│   │   │   ├── chat/     # AI chat endpoint
+│   │   ├── components/       # React components
+│   │   ├── ContentDisplay/       # Main chat display
+│   │   ├── MessageStatus/        # Connection status indicators
+│   ├── constants/        # Application constants
+│   ├── hooks/            # Custom React hooks
+│   │   ├── useChatLogger.ts      # Chat logging hook
+│   ├── lib/              # Utility functions
+│   │   ├── ai/           # AI model setup
+│   │   ├── logger.ts     # Server-side logging
+│   │   ├── supabase-client.ts    # Supabase client
+│   ├── types/            # TypeScript type definitions
+```
 
-## Learn More
+## Implementation Details
 
-To learn more about Next.js, take a look at the following resources:
+### AI Chat Processing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application uses the `@ai-sdk/google-vertex` package to communicate with Google Vertex AI. The chat is implemented with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Client Side**: Uses the `useChat` hook from `ai` SDK to manage conversation state
+- **Server Side**: API routes in `src/app/api/chat/route.ts` handle the communication with the AI model
 
-## Deploy on Vercel
+### Chat Logging System
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The application implements background logging of conversations:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Client-side Logging**: Uses a custom `useChatLogger` hook that tracks completed message pairs and logs them
+- **Supabase Integration**: Direct integration with Supabase for storing conversations
+- **Non-blocking**: Logging happens in the background without impacting the user experience
+
+### Error Handling
+
+The application handles various error scenarios gracefully:
+
+- Connection issues with the AI service
+- Database logging failures
+- Invalid user inputs
+
+## Deployment
+
+This application can be deployed to any platform that supports Next.js applications:
+
+### Vercel (Recommended)
+
+```bash
+npm install -g vercel
+vercel
+```
+
+### Other Platforms
+
+Build the application for production:
+
+```bash
+npm run build
+```
+
+Then start the production server:
+
+```bash
+npm start
+```
+
+## License
+
+[MIT](LICENSE)
+
+## Acknowledgements
+
+- [Next.js](https://nextjs.org/) - The React framework
+- [Google Vertex AI](https://cloud.google.com/vertex-ai) - The AI model provider
+- [Supabase](https://supabase.com/) - Open source Firebase alternative
+- [Vercel AI SDK](https://sdk.vercel.ai/docs) - Tools for building AI-powered user interfaces

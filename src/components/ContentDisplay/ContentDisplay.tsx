@@ -4,14 +4,13 @@ import ErrorState from '@/components/ContentDisplay/Error';
 import LoadingSpinner from '@/components/ContentDisplay/Loading';
 import { ConnectionStatus } from '@/types';
 import { Chat } from '@/components/ContentDisplay/Chat/Chat';
+import { useChatLogger } from '@/hooks/useChatLogger';
 
 type ContentDisplayProps = {
   connectionStatus: ConnectionStatus;
 };
 
-const ContentDisplay: React.FC<ContentDisplayProps> = ({
-  connectionStatus
-}) => {
+const ContentDisplay: React.FC<ContentDisplayProps> = ({ connectionStatus }) => {
   const { 
     messages, 
     input, 
@@ -21,6 +20,8 @@ const ContentDisplay: React.FC<ContentDisplayProps> = ({
   } = useChat({
     api: "/api/chat",
   });
+
+  useChatLogger(messages, status);
 
   const isLoading = status === 'submitted' || status === 'streaming';
   

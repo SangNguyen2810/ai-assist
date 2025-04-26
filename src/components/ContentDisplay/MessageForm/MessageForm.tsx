@@ -10,9 +10,6 @@ interface MessageFormProps {
 	isConnectionValid?: boolean | null;
 }
 
-/**
- * Message input form component that always stays at the bottom of the chat
- */
 const MessageForm: React.FC<MessageFormProps> = ({
 	input,
 	handleInputChange,

@@ -1,4 +1,4 @@
-
+import React from "react";
 
 const ChatMessageLoading = () => (
   <article className="flex justify-start">
@@ -12,4 +12,4 @@ const ChatMessageLoading = () => (
   </article>
 );
 
-export default ChatMessageLoading;
+export default React.memo(ChatMessageLoading);

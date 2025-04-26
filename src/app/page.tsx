@@ -18,7 +18,6 @@ export default function Home() {
 			try {
 				const response = await fetch("/api/test");
 				const result = (await response.json()) as TestResponse;
-
 				setConnectionStatus({
 					isChecking: false,
 					isConnected: result.success,
