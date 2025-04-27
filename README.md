@@ -121,6 +121,11 @@ The application implements background logging of conversations:
 - **Client-side Logging**: Uses a custom `useChatLogger` hook that tracks completed message pairs and logs them
 - **Supabase Integration**: Direct integration with Supabase for storing conversations
 - **Non-blocking**: Logging happens in the background without impacting the user experience
+- **Efficient Batching**: Implements message batching to optimize database operations:
+  - Collects messages in a queue until a configurable batch size is reached
+  - Automatically flushes messages based on a configurable time interval
+  - Preserves unsent messages during errors for retry
+  - Ensures pending messages are sent before page unload
 
 ### Error Handling
 

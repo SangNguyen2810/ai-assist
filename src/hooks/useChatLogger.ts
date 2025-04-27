@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Message } from 'ai';
-import { logChatToSupabase } from '@/lib/supabase-client';
+import { logChatToSupabase } from '@/lib/supabase/supabase-client';
 
 type ChatStatus = 'idle' | 'loading' | 'submitted' | 'streaming' | 'complete' | 'error' | 'ready';
 
